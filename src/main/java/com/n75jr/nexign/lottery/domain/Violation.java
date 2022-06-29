@@ -1,0 +1,12 @@
+package com.n75jr.nexign.lottery.domain;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor(staticName = "of")
+public class Violation {
+
+    private final String fieldName;
+    private final String message;
+}
