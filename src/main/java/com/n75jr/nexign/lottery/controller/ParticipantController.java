@@ -26,6 +26,20 @@ public class ParticipantController {
     private final Translator translator;
     private final ParticipantService participantService;
 
+    @GetMapping("/lottery/participant/generate/{size}")
+    public ResponseEntity<Map<String, ?>> generateParticipants(
+            @PathVariable(name = "size") @Min(1) @Max(100) int size
+    ) {
+        if (log.isTraceEnabled()) {
+            log.trace("[GET|PV]:/lottery/participant/size[{}]", size);
+        }
+        var participants = participantService.generate(size);
+        return ResponseEntity.ok(Map.of(
+                "size", participants.size(),
+                "participant", participants
+        ));
+    }
+
     @GetMapping("/lottery/participant")
     public ResponseEntity<Map<String, ?>> getAllParticipants() {
         if (log.isTraceEnabled()) {
@@ -33,7 +47,7 @@ public class ParticipantController {
         }
         var participants = participantService.findAll();
         return ResponseEntity.ok(Map.of(
-                "numberParticipants", participants.size(),
+                "size", participants.size(),
                 "participants", participants
         ));
     }
@@ -64,20 +78,6 @@ public class ParticipantController {
                 "message", translator.toLocale("pcpController.message.successSaved"),
                 "numberParticipants", savedParticipant.size(),
                 "id", savedIds
-        ));
-    }
-
-    @GetMapping("/lottery/participant/generate/{size}")
-    public ResponseEntity<Map<String, ?>> generateParticipants(
-            @PathVariable(name = "size") @Min(1) @Max(100) int size
-    ) {
-        if (log.isTraceEnabled()) {
-            log.trace("[GET|PV]:/lottery/participant/size[{}]", size);
-        }
-        var participants = participantService.generate(size);
-        return ResponseEntity.ok(Map.of(
-                "size", participants.size(),
-                "participant", participants
         ));
     }
 }
