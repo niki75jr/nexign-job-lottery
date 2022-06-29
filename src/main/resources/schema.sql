@@ -12,5 +12,5 @@ CREATE TABLE IF NOT EXISTS winner_records
     id             BIGSERIAL PRIMARY KEY,
     participant_id BIGINT REFERENCES participants (id) NOT NULL,
     sum            INT                                 NOT NULL,
-    created_at     timestamptz                         NOT NULL
+    created_at     TIMESTAMPTZ                         NOT NULL
 )
