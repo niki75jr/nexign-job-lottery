@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -31,6 +32,7 @@ public class Participant implements Serializable {
     private String lastName;
 
     @Min(value = 18L)
+    @Max(value = 150L)
     @Column(name = "age")
     private Integer age;
 
