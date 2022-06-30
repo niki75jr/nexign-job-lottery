@@ -30,9 +30,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(ParticipantController.class)
 class ParticipantControllerTest {
 
-    private static final String URI_GET_ALL = "/lottery/participant";
     private static final String URI_ADD = "/lottery/participant";
+    private static final String URI_GET_ALL = "/lottery/participant";
     private static final Long EXPECTED_NEW_ID = 1L;
+
     private ObjectMapper objectMapper;
     private List<Participant> participants;
     private Participant participantForSaving;
