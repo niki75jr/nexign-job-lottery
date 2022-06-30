@@ -25,7 +25,6 @@ public class ParticipantServiceImpl implements ParticipantService {
 
     private final RestTemplate restTemplate;
     private final ParticipantRepository participantRepo;
-    private final RandomParticipantMapper randomParticipantMapper;
 
     @Override
     @Transactional(readOnly = true)
@@ -73,9 +72,10 @@ public class ParticipantServiceImpl implements ParticipantService {
                 new ParameterizedTypeReference<List<RandomParticipantDTO>>() {
                 }
         ).getBody();
+        System.out.println("participantsDTO: " + participantsDTO);
         participantsDTO.stream().forEach(this::setRandomAge);
         var participants = participantsDTO.stream()
-                .map(randomParticipantMapper::toParticipant)
+                .map(RandomParticipantMapper::toParticipant)
                 .collect(toList());
         if (log.isTraceEnabled()) {
             log.trace("Generated {} participants", participants.size());
