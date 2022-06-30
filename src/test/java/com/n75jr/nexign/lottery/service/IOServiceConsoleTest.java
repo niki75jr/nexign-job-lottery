@@ -35,18 +35,21 @@ class IOServiceConsoleTest {
     @Test
     void shouldReadPhraseFromInBuffer() {
         var readString = ioService.readString();
+
         assertThat(readString).isEqualTo(PHRASE);
     }
 
     @Test
     void shouldWritePhraseToOutBuffer() {
         ioService.print(PHRASE);
+
         assertThat(outBuff.toByteArray()).isEqualTo(PHRASE.getBytes());
     }
 
     @Test
     void shouldWritePhraseToOutBufferWithLineSeparator() {
         ioService.println(PHRASE);
+
         assertThat(outBuff.toByteArray())
                 .isEqualTo((PHRASE + System.lineSeparator()).getBytes());
     }
