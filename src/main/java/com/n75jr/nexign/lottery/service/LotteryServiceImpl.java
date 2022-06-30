@@ -38,7 +38,7 @@ public class LotteryServiceImpl implements LotteryService {
     }
 
     private WinnerRecord detectWinner(List<Long> ids) {
-        var randIndex = randomService.getSingleIntegerRandom(1, ids.size());
+        var randIndex = randomService.getSingleIntegerRandom(0, ids.size() - 1);
         var randSum = randomService.getSingleIntegerRandom(1, 1000);
         var winner = participantService.findById(ids.get(randIndex));
         if (log.isTraceEnabled()) {
