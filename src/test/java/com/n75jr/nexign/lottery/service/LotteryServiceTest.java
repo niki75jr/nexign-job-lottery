@@ -2,28 +2,29 @@ package com.n75jr.nexign.lottery.service;
 
 import com.n75jr.nexign.lottery.domain.Participant;
 import com.n75jr.nexign.lottery.exception.NotEnoughParticipantsException;
-import org.junit.jupiter.api.Assertions;
+import com.n75jr.nexign.lottery.util.Utils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doReturn;
 
 @DisplayName("LotteryService test")
 @SpringBootTest(classes = LotteryServiceImpl.class)
 class LotteryServiceTest {
 
-    private final static List<Long> NOT_ENOUGH_ID_PARTICIPANTS = List.of(1L);
-
+    private static List<Participant> notEnoughParticipants;
     private static List<Participant> participants;
 
     @Autowired
@@ -37,33 +38,35 @@ class LotteryServiceTest {
 
     @BeforeAll
     static void setUp() {
-        participants = List.of(
-                Participant.of(1L, "Ivan", "Ivanov", 18, "Vladivostok"),
-                Participant.of(2L, "Petr", "Petrov", 20, "Chita"),
-                Participant.of(3L, "Anna", "Zolotoryova", 23, "Irkutsk")
-        );
+        notEnoughParticipants = Utils.generateParticipants(1);
+        participants = Utils.generateParticipants(10);
     }
 
     @Test
     void shouldThrowExceptionBecauseOfNotEnoughParticipants() {
-        Mockito.doReturn(NOT_ENOUGH_ID_PARTICIPANTS)
+        doReturn(notEnoughParticipants.stream()
+                        .map(Participant::getId)
+                        .collect(toList()))
                 .when(participantService).findAllId();
-        Assertions.assertThrows(NotEnoughParticipantsException.class, () -> lotteryService.startLottery());
+
+        assertThrows(NotEnoughParticipantsException.class,
+                () -> lotteryService.startLottery());
     }
 
     @Test
     void shouldReturnWinnerRecord() {
-        Mockito.doReturn(participants.stream()
+        doReturn(participants.stream()
                         .map(Participant::getId)
-                        .collect(Collectors.toList()))
+                        .collect(toList()))
                 .when(participantService).findAllId();
         var participantsSize = participants.size();
         var randomIndex = ThreadLocalRandom.current().nextInt(participantsSize);
         var randomSum = ThreadLocalRandom.current().nextInt(1000) + 1;
         var winnerId = participants.get(randomIndex).getId();
-        Mockito.doReturn(randomIndex).when(randomService).getSingleIntegerRandom(1, participantsSize);
-        Mockito.doReturn(randomSum).when(randomService).getSingleIntegerRandom(1, 1000);
-        Mockito.doReturn(participants.get(randomIndex)).when(participantService).findById(winnerId);
+        doReturn(randomIndex, randomSum)
+                .when(randomService).getSingleIntegerRandom(anyInt(), anyInt());
+        doReturn(participants.get(randomIndex))
+                .when(participantService).findById(winnerId);
         var winner = participants.get(randomIndex);
         var winnerRecord = lotteryService.startLottery();
 
